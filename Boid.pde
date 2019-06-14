@@ -10,8 +10,9 @@ class Boid extends Node {
   float t = 0;
   float currentEnergy = 0;
   boolean shouldBeDrawn = true;
+  boolean isPrey;
 
-  Boid(Scene scene, Vector inPos) {
+  Boid(Scene scene, Vector inPos, Boolean prey) {
     super(scene);
     position = new Vector();
     position.set(inPos);
@@ -19,13 +20,20 @@ class Boid extends Node {
     velocity = new Vector(ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(1, -1));
     acceleration = new Vector(0, 0, 0);
     neighborhoodRadius = 100;
-    currentEnergy = ProyectoVidaArtificial.this.random(500,2000);
+    currentEnergy = ProyectoVidaArtificial.this.random(50,200);
+    isPrey = prey;
   }
 
   @Override
   public void visit() {
-    if (animate)
-      run(flock);
+    if (animate){
+      if(isPrey){
+        run(flockPrey);
+      }
+      else{
+        run(flockPredator);
+      }
+    }
   }
 
   @Override
@@ -36,8 +44,14 @@ class Boid extends Node {
     //Scene.drawAxes(pg, 10);
 
     pg.strokeWeight(2);
-    pg.stroke(color(40, 255, 40));
-    pg.fill(color(255, 255, 0, 125));
+    if(isPrey){
+      pg.fill(color(0, 255, 0, 125));
+      pg.stroke(color(40, 255, 40));
+    }
+    else{
+      pg.fill(color(255, 0, 0, 125));
+      pg.stroke(color(255, 40, 40));
+    }
 
     // highlight boids under the mouse
     if (scene.trackedNode("mouseMoved") == this) {

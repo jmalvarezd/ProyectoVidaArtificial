@@ -35,8 +35,9 @@ boolean avoidWalls = true;
 
 
 
-int initBoidNum = 10; // amount of boids to start the program with
-ArrayList<Boid> flock;
+int initBoidNum = 100; // amount of boids to start the program with
+ArrayList<Boid> flockPrey;
+ArrayList<Boid> flockPredator;
 Node avatar; 
 boolean animate = true;
 
@@ -53,9 +54,12 @@ void setup() {
       sandPile3[i][j] = 0;
     }
   }
-  flock = new ArrayList();
-  for (int i = 0; i < initBoidNum; i++)
-    flock.add(new Boid(scene, new Vector(flockWidth / 4, flockHeight / 2, flockDepth / 2)));
+  flockPrey = new ArrayList();
+  flockPredator = new ArrayList();
+  for (int i = 0; i < initBoidNum; i++){
+    flockPrey.add(new Boid(scene, new Vector(flockWidth / 4, flockHeight / 2, flockDepth / 2),true));
+    flockPredator.add(new Boid(scene, new Vector(3*flockWidth / 4, flockHeight / 2, flockDepth / 2),false));
+  }
 }
 
 void draw() {
@@ -121,7 +125,7 @@ void plants(){
   rotateY(rotation1);
   line(0,0,0,-heightOfPlants);
   translate(0,-heightOfPlants,0);
-  branch(heightOfPlants);
+  branch(heightOfPlants, 0.5);
   popMatrix();
   
   pushMatrix();
@@ -129,7 +133,7 @@ void plants(){
   rotateY(rotation2);
   line(0,0,0,-heightOfPlants);
   translate(0,-heightOfPlants,0);
-  branch(heightOfPlants);
+  branch(heightOfPlants, 1);
   popMatrix();
   
   pushMatrix();
@@ -137,13 +141,13 @@ void plants(){
   rotateY(rotation3);
   line(0,0,0,-heightOfPlants);
   translate(0,-heightOfPlants,0);
-  branch(120);
+  branch(heightOfPlants,0.2);
   popMatrix();
   
   popMatrix();
 }
 
-void branch(float h) {
+void branch(float h, float factorLeftTheta) {
   // Each branch will be 2/3rds the size of the previous one
   h *= 0.66;
   
@@ -154,15 +158,15 @@ void branch(float h) {
     rotate(theta);   // Rotate by theta
     line(0, 0, 0, -h);  // Draw the branch
     translate(0, -h); // Move to the end of the branch
-    branch(h);       // Ok, now call myself to draw two new branches!!
+    branch(h, factorLeftTheta);       // Ok, now call myself to draw two new branches!!
     popMatrix();     // Whenever we get back here, we "pop" in order to restore the previous matrix state
     
     // Repeat the same thing, only branch off to the "left" this time!
     pushMatrix();
-    rotate(-(theta/2));
+    rotate(-(theta*factorLeftTheta));
     line(0, 0, 0, -(h/1.2));
     translate(0, -(h/1.2));
-    branch(h/1.2);
+    branch(h/1.2, factorLeftTheta);
     popMatrix();
   }
 }
@@ -204,12 +208,18 @@ void sandPiles(){
 
 
 void checkDeadBoids(){
-  for(int i = 0; i < flock.size(); i++){
-    if( flock.get(i).currentEnergy <= 0){
-      flock.get(i).shouldBeDrawn = false;
-      flock.get(i).position = new Vector(0,0,0);
-      flock.remove(i);
-      
+  for(int i = 0; i < flockPrey.size(); i++){
+    if( flockPrey.get(i).currentEnergy <= 0){
+      flockPrey.get(i).shouldBeDrawn = false;
+      flockPrey.get(i).position = new Vector(0,0,0);
+      flockPrey.remove(i);
+    };
+  }
+  for(int i = 0; i < flockPredator.size(); i++){
+    if( flockPredator.get(i).currentEnergy <= 0){
+      flockPredator.get(i).shouldBeDrawn = false;
+      flockPredator.get(i).position = new Vector(0,0,0);
+      flockPredator.remove(i);
     };
   }
 }
