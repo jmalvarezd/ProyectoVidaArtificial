@@ -33,7 +33,9 @@ int flockHeight = 720;
 int flockDepth = 600;
 boolean avoidWalls = true;
 
-int initBoidNum = 900; // amount of boids to start the program with
+
+
+int initBoidNum = 10; // amount of boids to start the program with
 ArrayList<Boid> flock;
 Node avatar; 
 boolean animate = true;
@@ -44,9 +46,16 @@ void setup() {
   scene.setFrustum(new Vector(0, 0, 0), new Vector(flockWidth, flockHeight, flockDepth));
   scene.fit();
   // create and fill the list of boids
+  for (int i = 0; i < heightOfPlants; i++) {
+    for (int j = 0; j < heightOfPlants; j++) {
+      sandPile1[i][j] = 0;
+      sandPile2[i][j] = 0;
+      sandPile3[i][j] = 0;
+    }
+  }
   flock = new ArrayList();
   for (int i = 0; i < initBoidNum; i++)
-    flock.add(new Boid(scene, new Vector(flockWidth / 2, flockHeight / 2, flockDepth / 2)));
+    flock.add(new Boid(scene, new Vector(flockWidth / 4, flockHeight / 2, flockDepth / 2)));
 }
 
 void draw() {
@@ -55,7 +64,9 @@ void draw() {
   directionalLight(255, 255, 255, 0, 1, -100);
   walls();
   plants();
+  sandPiles();
   scene.render();
+  checkDeadBoids();
   // uncomment to asynchronously update boid avatar. See mouseClicked()
   // updateAvatar(scene.trackedNode("mouseClicked"));
 }
@@ -83,20 +94,52 @@ void walls() {
 }
 
 float theta;  
-float plantX = -1, plantZ;
+float plant1X = -1, plant1Z, rotation1;
+float plant2X = -1, plant2Z, rotation2;
+float plant3X = -1, plant3Z, rotation3;
+int heightOfPlants = 120;
 void plants(){
   float a = (0.5) * 90f;
   theta = radians(a);
   pushMatrix();
   stroke(0,255,0);
-  if(plantX == -1){
-    plantX = random(20,flockWidth-20);
-    plantZ = random(20,flockDepth-20);
+  if(plant1X == -1){
+    plant1X = random(20,flockWidth-20);
+    plant1Z = random(20,flockDepth-20);
+    rotation1 = random(0,1);
+    
+    plant2X = random(20,flockWidth-20);
+    plant2Z = random(20,flockDepth-20);
+    rotation2 = random(0,1);
+    
+    plant3X = random(20,flockWidth-20);
+    plant3Z = random(20,flockDepth-20);
+    rotation3 = random(0,1);
   }
-  translate(plantX,flockHeight,plantZ);
-  line(0,0,0,-120);
-  translate(0,-120,0);
+  pushMatrix();
+  translate(plant1X,flockHeight,plant1Z);
+  rotateY(rotation1);
+  line(0,0,0,-heightOfPlants);
+  translate(0,-heightOfPlants,0);
+  branch(heightOfPlants);
+  popMatrix();
+  
+  pushMatrix();
+  translate(plant2X,flockHeight,plant2Z);
+  rotateY(rotation2);
+  line(0,0,0,-heightOfPlants);
+  translate(0,-heightOfPlants,0);
+  branch(heightOfPlants);
+  popMatrix();
+  
+  pushMatrix();
+  translate(plant3X,flockHeight,plant3Z);
+  rotateY(rotation3);
+  line(0,0,0,-heightOfPlants);
+  translate(0,-heightOfPlants,0);
   branch(120);
+  popMatrix();
+  
   popMatrix();
 }
 
@@ -116,11 +159,58 @@ void branch(float h) {
     
     // Repeat the same thing, only branch off to the "left" this time!
     pushMatrix();
-    rotate(-theta);
-    line(0, 0, 0, -h);
-    translate(0, -h);
-    branch(h);
+    rotate(-(theta/2));
+    line(0, 0, 0, -(h/1.2));
+    translate(0, -(h/1.2));
+    branch(h/1.2);
     popMatrix();
+  }
+}
+
+float[][] sandPile1 = new float[heightOfPlants][heightOfPlants];
+float[][] sandPile2 = new float[heightOfPlants][heightOfPlants];
+float[][] sandPile3 = new float[heightOfPlants][heightOfPlants];
+void sandPiles(){
+  for (int i = 0; i < heightOfPlants; i++) {
+    for (int j = 0; j < heightOfPlants; j++) {
+      float capacity = 60-dist(i,j,heightOfPlants/2, heightOfPlants/2);
+      if(sandPile1[i][j] < capacity){
+        sandPile1[i][j] = sandPile1[i][j] + 0.5;
+      }
+      if(sandPile2[i][j] < capacity){
+        sandPile2[i][j] = sandPile2[i][j] + 0.5;
+      }
+      if(sandPile3[i][j] < capacity){
+        sandPile3[i][j] = sandPile3[i][j] + 0.5;
+      }
+      pushMatrix();
+      translate(plant1X-heightOfPlants/2+i,flockHeight,plant1Z-heightOfPlants/2+j);
+      line(0,0,0,-sandPile1[i][j]);
+      popMatrix();
+      
+      pushMatrix();
+      translate(plant2X-heightOfPlants/2+i,flockHeight,plant2Z-heightOfPlants/2+j);
+      line(0,0,0,-sandPile2[i][j]);
+      popMatrix();
+      
+      pushMatrix();
+      translate(plant3X-heightOfPlants/2+i,flockHeight,plant3Z-heightOfPlants/2+j);
+      line(0,0,0,-sandPile3[i][j]);
+      popMatrix();
+      
+    }
+  }
+}
+
+
+void checkDeadBoids(){
+  for(int i = 0; i < flock.size(); i++){
+    if( flock.get(i).currentEnergy <= 0){
+      flock.get(i).shouldBeDrawn = false;
+      flock.get(i).position = new Vector(0,0,0);
+      flock.remove(i);
+      
+    };
   }
 }
 

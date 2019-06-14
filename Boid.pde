@@ -8,15 +8,18 @@ class Boid extends Node {
   float sc = 3; // scale factor for the render of the boid
   float flap = 0;
   float t = 0;
+  float currentEnergy = 0;
+  boolean shouldBeDrawn = true;
 
   Boid(Scene scene, Vector inPos) {
     super(scene);
     position = new Vector();
     position.set(inPos);
     setPosition(new Vector(position.x(), position.y(), position.z()));
-    velocity = new Vector(TestProjectArtificialLife.this.random(-1, 1), TestProjectArtificialLife.this.random(-1, 1), TestProjectArtificialLife.this.random(1, -1));
+    velocity = new Vector(ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(1, -1));
     acceleration = new Vector(0, 0, 0);
     neighborhoodRadius = 100;
+    currentEnergy = ProyectoVidaArtificial.this.random(500,2000);
   }
 
   @Override
@@ -84,8 +87,10 @@ class Boid extends Node {
       acceleration.add(Vector.multiply(avoid(new Vector(position.x(), position.y(), flockDepth)), 5));
     }
     flock(bl);
+    hungryBehavior();
     move();
     checkBounds();
+    
   }
 
   Vector avoid(Vector target) {
@@ -111,13 +116,14 @@ class Boid extends Node {
       Boid boid = boids.get(i);
       //alignment
       float distance = Vector.distance(position, boid.position);
+      //print("distance = " + distance + " ");
       if (distance > 0 && distance <= neighborhoodRadius) {
         alignment.add(boid.velocity);
         alignmentCount++;
       }
       //cohesion
-      float dist = dist(position.x(), position.y(), boid.position.x(), boid.position.y());
-      if (dist > 0 && dist <= neighborhoodRadius) {
+      //distance = dist(position.x(), position.y(), boid.position.x(), boid.position.y());
+      if (distance > 0 && distance <= neighborhoodRadius) {
         posSum.add(boid.position);
         cohesionCount++;
       }
@@ -144,6 +150,10 @@ class Boid extends Node {
     acceleration.add(Vector.multiply(cohesion, 3));
     acceleration.add(Vector.multiply(separation, 1));
   }
+  
+  void hungryBehavior(){
+  
+  }
 
   void move() {
     velocity.add(acceleration); // add acceleration to velocity
@@ -154,6 +164,7 @@ class Boid extends Node {
     setRotation(Quaternion.multiply(new Quaternion(new Vector(0, 1, 0), atan2(-velocity.z(), velocity.x())), 
       new Quaternion(new Vector(0, 0, 1), asin(velocity.y() / velocity.magnitude()))));
     acceleration.multiply(0); // reset acceleration
+    currentEnergy = currentEnergy - 1;
   }
 
   void checkBounds() {
