@@ -16,8 +16,8 @@ class Boid extends Node {
   Boid(Scene scene, Vector inPos, Boolean prey) {
     super(scene);
     piel = new Piel();
-    piel.setup();
     piel.c = false;
+    piel.setup();
     position = new Vector();
     position.set(inPos);
     setPosition(new Vector(position.x(), position.y(), position.z()));

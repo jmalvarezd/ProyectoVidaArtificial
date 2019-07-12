@@ -34,27 +34,21 @@ int flockDepth = 600;
 boolean avoidWalls = true;
 
 
-
-int initBoidNum = 100; // amount of boids to start the program with
+int initBoidNum = 10; // amount of boids to start the program with
 ArrayList<Boid> flockPrey;
 ArrayList<BoidPredator> flockPredator;
 Node avatar; 
 boolean animate = true;
-Piel testPiel;
+//Piel testPiel;
 
 void setup() {
   size(1000, 800, P3D);
   scene = new Scene(this);
   scene.setFrustum(new Vector(0, 0, 0), new Vector(flockWidth, flockHeight, flockDepth));
   scene.fit();
+  //scene.drawAxes();
+  
   // create and fill the list of boids
-  for (int i = 0; i < heightOfPlants; i++) {
-    for (int j = 0; j < heightOfPlants; j++) {
-      sandPile1[i][j] = 0;
-      sandPile2[i][j] = 0;
-      sandPile3[i][j] = 0;
-    }
-  }
   flockPrey = new ArrayList();
   flockPredator = new ArrayList();
   for (int i = 0; i < initBoidNum; i++){
@@ -63,6 +57,24 @@ void setup() {
   }
   //testPiel = new Piel();
   //testPiel.setup();
+  
+  //CREATE BASIC PLANT AND PILES POSITIONS
+  plant1X = random(20,flockWidth-20);
+  plant1Z = random(20,flockDepth-20);
+  rotation1 = random(0,1);
+  
+  plant2X = random(20,flockWidth-20);
+  plant2Z = random(20,flockDepth-20);
+  rotation2 = random(0,1);
+  
+  plant3X = random(20,flockWidth-20);
+  plant3Z = random(20,flockDepth-20);
+  rotation3 = random(0,1);
+  
+  new SandPile(scene, new Vector(plant1X,flockHeight,plant1Z));
+  new SandPile(scene, new Vector(plant2X,flockHeight,plant2Z));
+  new SandPile(scene, new Vector(plant3X,flockHeight,plant3Z));
+  
   
 }
 
@@ -78,9 +90,9 @@ void draw() {
   //vertex(200,200,0,1,1);
   //vertex(0,200,0,0,1);
   //endShape();
+  //scene.drawAxes();
   walls();
   plants();
-  sandPiles();
   scene.render();
   checkDeadBoids();
   // uncomment to asynchronously update boid avatar. See mouseClicked()
@@ -120,19 +132,8 @@ void plants(){
   pushStyle();
   pushMatrix();
   stroke(0,255,0);
-  if(plant1X == -1){
-    plant1X = random(20,flockWidth-20);
-    plant1Z = random(20,flockDepth-20);
-    rotation1 = random(0,1);
-    
-    plant2X = random(20,flockWidth-20);
-    plant2Z = random(20,flockDepth-20);
-    rotation2 = random(0,1);
-    
-    plant3X = random(20,flockWidth-20);
-    plant3Z = random(20,flockDepth-20);
-    rotation3 = random(0,1);
-  }
+  
+  
   pushMatrix();
   translate(plant1X,flockHeight,plant1Z);
   rotateY(rotation1);
@@ -182,41 +183,6 @@ void branch(float h, float factorLeftTheta) {
     translate(0, -(h/1.2));
     branch(h/1.2, factorLeftTheta);
     popMatrix();
-  }
-}
-
-float[][] sandPile1 = new float[heightOfPlants][heightOfPlants];
-float[][] sandPile2 = new float[heightOfPlants][heightOfPlants];
-float[][] sandPile3 = new float[heightOfPlants][heightOfPlants];
-void sandPiles(){
-  for (int i = 0; i < heightOfPlants; i++) {
-    for (int j = 0; j < heightOfPlants; j++) {
-      float capacity = 60-dist(i,j,heightOfPlants/2, heightOfPlants/2);
-      if(sandPile1[i][j] < capacity){
-        sandPile1[i][j] = sandPile1[i][j] + 0.5;
-      }
-      if(sandPile2[i][j] < capacity){
-        sandPile2[i][j] = sandPile2[i][j] + 0.5;
-      }
-      if(sandPile3[i][j] < capacity){
-        sandPile3[i][j] = sandPile3[i][j] + 0.5;
-      }
-      pushMatrix();
-      translate(plant1X-heightOfPlants/2+i,flockHeight,plant1Z-heightOfPlants/2+j);
-      line(0,0,0,-sandPile1[i][j]);
-      popMatrix();
-      
-      pushMatrix();
-      translate(plant2X-heightOfPlants/2+i,flockHeight,plant2Z-heightOfPlants/2+j);
-      line(0,0,0,-sandPile2[i][j]);
-      popMatrix();
-      
-      pushMatrix();
-      translate(plant3X-heightOfPlants/2+i,flockHeight,plant3Z-heightOfPlants/2+j);
-      line(0,0,0,-sandPile3[i][j]);
-      popMatrix();
-      
-    }
   }
 }
 
