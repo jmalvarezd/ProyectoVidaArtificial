@@ -37,9 +37,10 @@ boolean avoidWalls = true;
 
 int initBoidNum = 100; // amount of boids to start the program with
 ArrayList<Boid> flockPrey;
-ArrayList<Boid> flockPredator;
+ArrayList<BoidPredator> flockPredator;
 Node avatar; 
 boolean animate = true;
+Piel testPiel;
 
 void setup() {
   size(1000, 800, P3D);
@@ -58,14 +59,25 @@ void setup() {
   flockPredator = new ArrayList();
   for (int i = 0; i < initBoidNum; i++){
     flockPrey.add(new Boid(scene, new Vector(flockWidth / 4, flockHeight / 2, flockDepth / 2),true));
-    flockPredator.add(new Boid(scene, new Vector(3*flockWidth / 4, flockHeight / 2, flockDepth / 2),false));
+    flockPredator.add(new BoidPredator(scene, new Vector(3*flockWidth / 4, flockHeight / 2, flockDepth / 2),false));
   }
+  //testPiel = new Piel();
+  //testPiel.setup();
+  
 }
 
 void draw() {
   background(10, 50, 25);
   ambientLight(128, 128, 128);
   directionalLight(255, 255, 255, 0, 1, -100);
+  //textureMode(NORMAL);
+  //beginShape();
+  //texture(testPiel.img);
+  //vertex(0,0,0,0,0);
+  //vertex(200,0,0,1,0);
+  //vertex(200,200,0,1,1);
+  //vertex(0,200,0,0,1);
+  //endShape();
   walls();
   plants();
   sandPiles();
@@ -105,6 +117,7 @@ int heightOfPlants = 120;
 void plants(){
   float a = (0.5) * 90f;
   theta = radians(a);
+  pushStyle();
   pushMatrix();
   stroke(0,255,0);
   if(plant1X == -1){
@@ -145,6 +158,7 @@ void plants(){
   popMatrix();
   
   popMatrix();
+  popStyle();
 }
 
 void branch(float h, float factorLeftTheta) {

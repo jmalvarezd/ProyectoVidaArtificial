@@ -1,4 +1,4 @@
-class Boid extends Node {
+class BoidPredator extends Node {
   // fields
   Vector position, velocity, acceleration, alignment, cohesion, separation; // position, velocity, and acceleration in
   // a vector datatype
@@ -13,11 +13,10 @@ class Boid extends Node {
   boolean isPrey;
   Piel piel;
 
-  Boid(Scene scene, Vector inPos, Boolean prey) {
+  BoidPredator(Scene scene, Vector inPos, Boolean prey) {
     super(scene);
     piel = new Piel();
-    piel.setup();
-    piel.c = false;
+    piel.c = true;
     position = new Vector();
     position.set(inPos);
     setPosition(new Vector(position.x(), position.y(), position.z()));
@@ -31,7 +30,7 @@ class Boid extends Node {
   @Override
   public void visit() {
     if (animate){
-      run(flockPrey);
+      run(flockPredator);
     }
   }
 
@@ -88,7 +87,7 @@ class Boid extends Node {
     pg.popStyle();
   }
 
-  public void run(ArrayList<Boid> bl) {
+  public void run(ArrayList<BoidPredator> bl) {
     t += .1;
     flap = 10 * sin(t);
     // acceleration.add(steer(new Vector(mouseX,mouseY,300),true));
@@ -117,7 +116,7 @@ class Boid extends Node {
 
   //-----------behaviors---------------
 
-  void flock(ArrayList<Boid> boids) {
+  void flock(ArrayList<BoidPredator> boids) {
     //alignment
     alignment = new Vector(0, 0, 0);
     int alignmentCount = 0;
@@ -128,7 +127,7 @@ class Boid extends Node {
     separation = new Vector(0, 0, 0);
     Vector repulse;
     for (int i = 0; i < boids.size(); i++) {
-      Boid boid = boids.get(i);
+      BoidPredator boid = boids.get(i);
       //alignment
       float distance = Vector.distance(position, boid.position);
       //print("distance = " + distance + " ");
