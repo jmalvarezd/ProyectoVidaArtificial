@@ -73,7 +73,7 @@ class Boid extends Node {
 
     pg.vertex(-3 * sc, 0, 2 * sc,0.5,0);
     pg.vertex(-3 * sc, 2 * sc, 0,0,1);
-    pg.vertex(-3 * sc, -2 * sc, 0,0,1);
+    pg.vertex(-3 * sc, -2 * sc, 0,1,0);
     pg.endShape();
 
     pg.popStyle();
