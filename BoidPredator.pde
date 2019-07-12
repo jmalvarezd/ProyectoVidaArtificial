@@ -17,6 +17,7 @@ class BoidPredator extends Node {
     super(scene);
     piel = new Piel();
     piel.c = true;
+    piel.setup();
     position = new Vector();
     position.set(inPos);
     setPosition(new Vector(position.x(), position.y(), position.z()));
@@ -40,28 +41,19 @@ class BoidPredator extends Node {
 
     // uncomment to draw boid axes
     //Scene.drawAxes(pg, 10);
+    pg.noStroke();
 
-    //pg.strokeWeight(2);
-    //if(isPrey){
-    //  pg.fill(color(0, 255, 0, 125));
-    //  pg.stroke(color(40, 255, 40));
-    //}
-    //else{
-    //  pg.fill(color(255, 0, 0, 125));
-    //  pg.stroke(color(255, 40, 40));
-    //}
+    // highlight boids under the mouse
+    if (scene.trackedNode("mouseMoved") == this) {
+      pg.stroke(color(0, 0, 255));
+      pg.fill(color(0, 0, 255));
+    }
 
-    //// highlight boids under the mouse
-    //if (scene.trackedNode("mouseMoved") == this) {
-    //  pg.stroke(color(0, 0, 255));
-    //  pg.fill(color(0, 0, 255));
-    //}
-
-    //// highlight avatar
-    //if (this ==  avatar) {
-    //  pg.stroke(color(255, 0, 0));
-    //  pg.fill(color(255, 0, 0));
-    //}
+    // highlight avatar
+    if (this ==  avatar) {
+      pg.stroke(color(255, 0, 0));
+      pg.fill(color(255, 0, 0));
+    }
 
     //draw boid
     textureMode(NORMAL);
