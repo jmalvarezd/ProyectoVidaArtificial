@@ -37,9 +37,13 @@ boolean avoidWalls = true;
 int initBoidNum = 10; // amount of boids to start the program with
 ArrayList<Boid> flockPrey;
 ArrayList<BoidPredator> flockPredator;
+ArrayList<SandPile> pilesOfFood;
 Node avatar; 
 boolean animate = true;
 //Piel testPiel;
+
+int createBoid = 0;
+ArrayList<Vector> positionsToCreate;
 
 void setup() {
   size(1000, 800, P3D);
@@ -48,15 +52,7 @@ void setup() {
   scene.fit();
   //scene.drawAxes();
   
-  // create and fill the list of boids
-  flockPrey = new ArrayList();
-  flockPredator = new ArrayList();
-  for (int i = 0; i < initBoidNum; i++){
-    flockPrey.add(new Boid(scene, new Vector(flockWidth / 4, flockHeight / 2, flockDepth / 2),true));
-    flockPredator.add(new BoidPredator(scene, new Vector(3*flockWidth / 4, flockHeight / 2, flockDepth / 2),false));
-  }
-  //testPiel = new Piel();
-  //testPiel.setup();
+  positionsToCreate = new ArrayList();  
   
   //CREATE BASIC PLANT AND PILES POSITIONS
   plant1X = random(20,flockWidth-20);
@@ -71,32 +67,50 @@ void setup() {
   plant3Z = random(20,flockDepth-20);
   rotation3 = random(0,1);
   
-  new SandPile(scene, new Vector(plant1X,flockHeight,plant1Z));
-  new SandPile(scene, new Vector(plant2X,flockHeight,plant2Z));
-  new SandPile(scene, new Vector(plant3X,flockHeight,plant3Z));
+  pilesOfFood = new ArrayList();
+  pilesOfFood.add(new SandPile(scene, new Vector(plant1X,flockHeight,plant1Z)));
+  pilesOfFood.add(new SandPile(scene, new Vector(plant2X,flockHeight,plant2Z)));
+  pilesOfFood.add(new SandPile(scene, new Vector(plant3X,flockHeight,plant3Z)));
   
-  
+  // create and fill the list of boids
+  flockPrey = new ArrayList();
+  flockPredator = new ArrayList();
+  for (int i = 0; i < initBoidNum; i++){
+    flockPrey.add(new Boid(scene, new Vector(flockWidth / 4, flockHeight / 2, flockDepth / 2),true));
+    flockPredator.add(new BoidPredator(scene, new Vector(3*flockWidth / 4, flockHeight / 2, flockDepth / 2),false));
+  }
+  //testPiel = new Piel();
+  //testPiel.setup();
 }
 
 void draw() {
   background(10, 50, 25);
   ambientLight(128, 128, 128);
   directionalLight(255, 255, 255, 0, 1, -100);
-  //textureMode(NORMAL);
-  //beginShape();
-  //texture(testPiel.img);
-  //vertex(0,0,0,0,0);
-  //vertex(200,0,0,1,0);
-  //vertex(200,200,0,1,1);
-  //vertex(0,200,0,0,1);
-  //endShape();
   //scene.drawAxes();
+
+  
   walls();
   plants();
   scene.render();
+  
+  createNewBoids();
   checkDeadBoids();
   // uncomment to asynchronously update boid avatar. See mouseClicked()
   // updateAvatar(scene.trackedNode("mouseClicked"));
+  
+  //Reset values
+  positionsToCreate = new ArrayList();
+  createBoid = 0;
+  //println(flockPrey.size());
+  
+}
+
+void createNewBoids(){
+  for(int i = 0; i < positionsToCreate.size(); i++){
+    //println("creating new");
+    flockPrey.add(new Boid(scene, positionsToCreate.get(i),true));
+  }
 }
 
 void walls() {

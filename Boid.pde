@@ -9,8 +9,13 @@ class Boid extends Node {
   float flap = 0;
   float t = 0;
   float currentEnergy = 0;
+  float maxEnergy;
   boolean shouldBeDrawn = true;
   boolean isPrey;
+  boolean isMale;
+  boolean isAdult = false;
+  int preferedFood;
+  float distanceToFood;
   Piel piel;
 
   Boid(Scene scene, Vector inPos, Boolean prey) {
@@ -24,8 +29,12 @@ class Boid extends Node {
     velocity = new Vector(ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(1, -1));
     acceleration = new Vector(0, 0, 0);
     neighborhoodRadius = 100;
-    currentEnergy = ProyectoVidaArtificial.this.random(500,2000);
+    maxEnergy = ProyectoVidaArtificial.this.random(500,2000);
+    currentEnergy = maxEnergy*3.0/4.0;
     isPrey = prey;
+    preferedFood = int(ProyectoVidaArtificial.this.random(0,3));
+    distanceToFood = Vector.distance(position, pilesOfFood.get(preferedFood).position);
+    isMale = Math.random() < 0.5;
   }
 
   @Override
@@ -40,7 +49,9 @@ class Boid extends Node {
     pg.pushStyle();
 
     //uncomment to draw boid axes
-    //Scene.drawAxes(pg, 10);
+    if(isMale){
+      Scene.drawAxes(pg, 10);
+    }
     pg.noStroke();
 
     // highlight boids under the mouse
@@ -81,16 +92,20 @@ class Boid extends Node {
 
   public void run(ArrayList<Boid> bl) {
     t += .1;
+    if(t > 30){
+      isAdult = true;
+    }
     flap = 10 * sin(t);
     // acceleration.add(steer(new Vector(mouseX,mouseY,300),true));
-    // acceleration.add(new Vector(0,.05,0));
+    //acceleration.add(new Vector(0,1,0));
     if (avoidWalls) {
-      acceleration.add(Vector.multiply(avoid(new Vector(position.x(), flockHeight, position.z())), 5));
-      acceleration.add(Vector.multiply(avoid(new Vector(position.x(), 0, position.z())), 5));
-      acceleration.add(Vector.multiply(avoid(new Vector(flockWidth, position.y(), position.z())), 5));
-      acceleration.add(Vector.multiply(avoid(new Vector(0, position.y(), position.z())), 5));
-      acceleration.add(Vector.multiply(avoid(new Vector(position.x(), position.y(), 0)), 5));
-      acceleration.add(Vector.multiply(avoid(new Vector(position.x(), position.y(), flockDepth)), 5));
+      float turner = 5;
+      acceleration.add(Vector.multiply(avoid(new Vector(position.x(), flockHeight , position.z())), turner));
+      acceleration.add(Vector.multiply(avoid(new Vector(position.x(), 0           , position.z())), turner));
+      acceleration.add(Vector.multiply(avoid(new Vector(flockWidth  , position.y(), position.z())), turner));
+      acceleration.add(Vector.multiply(avoid(new Vector(0           , position.y(), position.z())), turner));
+      acceleration.add(Vector.multiply(avoid(new Vector(position.x(), position.y(), 0           )), turner));
+      acceleration.add(Vector.multiply(avoid(new Vector(position.x(), position.y(), flockDepth  )), turner));
     }
     flock(bl);
     hungryBehavior();
@@ -102,6 +117,13 @@ class Boid extends Node {
   Vector avoid(Vector target) {
     Vector steer = new Vector(); // creates vector for steering
     steer.set(Vector.subtract(position, target)); // steering vector points away from
+    steer.multiply(1 / sq(Vector.distance(position, target)));
+    return steer;
+  }
+  
+  Vector seek(Vector target) {
+    Vector steer = new Vector(); // creates vector for steering
+    steer.set(Vector.subtract(target, position)); // steering vector points away from
     steer.multiply(1 / sq(Vector.distance(position, target)));
     return steer;
   }
@@ -132,6 +154,7 @@ class Boid extends Node {
       if (distance > 0 && distance <= neighborhoodRadius) {
         posSum.add(boid.position);
         cohesionCount++;
+        reproduce(boid);
       }
       //separation
       if (distance > 0 && distance <= neighborhoodRadius) {
@@ -158,7 +181,29 @@ class Boid extends Node {
   }
   
   void hungryBehavior(){
+    if(currentEnergy < maxEnergy/2){
+      distanceToFood = Vector.distance(position, pilesOfFood.get(preferedFood).position);
+      acceleration.add(Vector.multiply(seek(pilesOfFood.get(preferedFood).position), 50));
+      if(distanceToFood > 0 && distanceToFood <= neighborhoodRadius){
+        if(maxEnergy - currentEnergy > pilesOfFood.get(preferedFood).currentEnergy){
+          currentEnergy += pilesOfFood.get(preferedFood).currentEnergy;
+          pilesOfFood.get(preferedFood).currentEnergy = 0;
+        }
+        else{ 
+          pilesOfFood.get(preferedFood).currentEnergy -= maxEnergy-currentEnergy;
+          currentEnergy = maxEnergy;
+        }
+      }
+    }
+  }
   
+  void reproduce(Boid boid){
+    if(currentEnergy > maxEnergy*9.0/10.0 && (isMale ^ boid.isMale) && (isAdult) && (boid.isAdult)){
+      currentEnergy = currentEnergy/2.0;
+      boid.currentEnergy = boid.currentEnergy/2.0;
+      createBoid += 1;
+      positionsToCreate.add(position);
+    }
   }
 
   void move() {

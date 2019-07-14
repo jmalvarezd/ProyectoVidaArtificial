@@ -3,7 +3,7 @@ public class SandPile extends Node{
   Vector position;
   float currentEnergy;
   float baseSize = 60;
-  float maxEnergy = baseSize;
+  float maxEnergy = baseSize*500;
   
   SandPile(Scene scene, Vector inPos){
     super(scene);
@@ -18,12 +18,12 @@ public class SandPile extends Node{
   public void visit() {
     if (animate){
       if(currentEnergy < maxEnergy){
-        currentEnergy += 0.1;
+        currentEnergy += 50;
       }
       else{
         currentEnergy = maxEnergy;
       }
-      pyramid = truncatedPyramid(baseSize-currentEnergy,baseSize,currentEnergy,10);
+      pyramid = truncatedPyramid(baseSize-currentEnergy/500,baseSize,currentEnergy/500,10);
     }
   }
   

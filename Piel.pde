@@ -64,7 +64,7 @@ public class Piel {
     }
 
     void update() {
-        for (int s= 0; s < 200; s++) {
+        for (int s = 0; s < 50; s++) {
             for (int i = 1; i < w - 1; i++) {
                 for (int j = 1; j < h - 1; j++) {
 
@@ -73,10 +73,10 @@ public class Piel {
 
                     float laplaceA = 0;
                     laplaceA += a * -1;                
-                    laplaceA += space[i + 1][j][0] * 0.2;
-                    laplaceA += space[i - 1][j][0] * 0.2;
-                    laplaceA += space[i][j + 1][0] * 0.2;
-                    laplaceA += space[i][j - 1][0] * 0.2;
+                    laplaceA += space[i + 1][j    ][0] * 0.2;
+                    laplaceA += space[i - 1][j    ][0] * 0.2;
+                    laplaceA += space[i    ][j + 1][0] * 0.2;
+                    laplaceA += space[i    ][j - 1][0] * 0.2;
                     laplaceA += space[i - 1][j - 1][0] * 0.05;
                     laplaceA += space[i + 1][j - 1][0] * 0.05;
                     laplaceA += space[i - 1][j + 1][0] * 0.05;
@@ -84,10 +84,10 @@ public class Piel {
 
                     float laplaceB = 0;
                     laplaceB += b * -1;
-                    laplaceB += space[i + 1][j][1] * 0.2;
-                    laplaceB += space[i - 1][j][1] * 0.2;
-                    laplaceB += space[i][j + 1][1] * 0.2;
-                    laplaceB += space[i][j - 1][1] * 0.2;
+                    laplaceB += space[i + 1][j    ][1] * 0.2;
+                    laplaceB += space[i - 1][j    ][1] * 0.2;
+                    laplaceB += space[i    ][j + 1][1] * 0.2;
+                    laplaceB += space[i    ][j - 1][1] * 0.2;
                     laplaceB += space[i - 1][j - 1][1] * 0.05;
                     laplaceB += space[i + 1][j - 1][1] * 0.05;
                     laplaceB += space[i - 1][j + 1][1] * 0.05;

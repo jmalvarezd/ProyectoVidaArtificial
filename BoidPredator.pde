@@ -1,14 +1,17 @@
 class BoidPredator extends Node {
   // fields
   Vector position, velocity, acceleration, alignment, cohesion, separation; // position, velocity, and acceleration in
+  Vector prey;
   // a vector datatype
   float neighborhoodRadius; // radius in which it looks for fellow boids
+  float eatingRadius;
   float maxSpeed = 4; // maximum magnitude for the velocity vector
   float maxSteerForce = .1f; // maximum magnitude of the steering vector
-  float sc = 3; // scale factor for the render of the boid
+  float sc = 10; // scale factor for the render of the boid
   float flap = 0;
   float t = 0;
   float currentEnergy = 0;
+  float maxEnergy;
   boolean shouldBeDrawn = true;
   boolean isPrey;
   Piel piel;
@@ -24,7 +27,9 @@ class BoidPredator extends Node {
     velocity = new Vector(ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(1, -1));
     acceleration = new Vector(0, 0, 0);
     neighborhoodRadius = 100;
-    currentEnergy = ProyectoVidaArtificial.this.random(500,2000);
+    eatingRadius = neighborhoodRadius/2;
+    maxEnergy = ProyectoVidaArtificial.this.random(500,2000);
+    currentEnergy = maxEnergy;
     isPrey = prey;
   }
 
@@ -154,11 +159,28 @@ class BoidPredator extends Node {
 
     acceleration.add(Vector.multiply(alignment, 1));
     acceleration.add(Vector.multiply(cohesion, 3));
-    acceleration.add(Vector.multiply(separation, 1));
+    acceleration.add(Vector.multiply(separation, 3));
   }
   
   void hungryBehavior(){
-  
+    for (int i = 0; i < flockPrey.size(); i++) {
+      Boid boid = flockPrey.get(i);
+      //alignment
+      float distance = Vector.distance(position, boid.position);
+      prey = new Vector();
+      if (distance > 0 && distance <= neighborhoodRadius) {
+        prey.add(boid.position);
+        prey.limit(maxSteerForce);
+        acceleration.add(Vector.multiply(prey,10.0*(currentEnergy/maxEnergy)));
+        if (distance > 0 && distance <= eatingRadius) {
+          currentEnergy += boid.currentEnergy;
+          boid.currentEnergy = 0;
+        }
+        break;
+      }
+    }
+    
+ 
   }
 
   void move() {
