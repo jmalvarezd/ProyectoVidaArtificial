@@ -14,6 +14,8 @@ class BoidPredator extends Node {
   float maxEnergy;
   boolean shouldBeDrawn = true;
   boolean isPrey;
+  boolean isMale;
+  boolean isAdult = false;
   Piel piel;
 
   BoidPredator(Scene scene, Vector inPos, Boolean prey) {
@@ -31,6 +33,7 @@ class BoidPredator extends Node {
     maxEnergy = ProyectoVidaArtificial.this.random(500,2000);
     currentEnergy = maxEnergy;
     isPrey = prey;
+    isMale = Math.random() < 0.5;
   }
 
   @Override
@@ -87,6 +90,9 @@ class BoidPredator extends Node {
   public void run(ArrayList<BoidPredator> bl) {
     t += .1;
     flap = 10 * sin(t);
+    if(t > 30){
+      isAdult = true;
+    }
     // acceleration.add(steer(new Vector(mouseX,mouseY,300),true));
     // acceleration.add(new Vector(0,.05,0));
     if (avoidWalls) {
@@ -137,6 +143,7 @@ class BoidPredator extends Node {
       if (distance > 0 && distance <= neighborhoodRadius) {
         posSum.add(boid.position);
         cohesionCount++;
+        reproduce(boid);
       }
       //separation
       if (distance > 0 && distance <= neighborhoodRadius) {
@@ -170,8 +177,9 @@ class BoidPredator extends Node {
       prey = new Vector();
       if (distance > 0 && distance <= neighborhoodRadius) {
         prey.add(boid.position);
+        prey = Vector.subtract(prey,position);
         prey.limit(maxSteerForce);
-        acceleration.add(Vector.multiply(prey,10.0*(currentEnergy/maxEnergy)));
+        acceleration.add(Vector.multiply(prey,10.0));
         if (distance > 0 && distance <= eatingRadius) {
           currentEnergy += boid.currentEnergy;
           boid.currentEnergy = 0;
@@ -179,10 +187,15 @@ class BoidPredator extends Node {
         break;
       }
     }
-    
- 
   }
-
+  void reproduce(BoidPredator boid){
+    if(currentEnergy > maxEnergy*9.0/10.0 && (isMale ^ boid.isMale) && (isAdult) && (boid.isAdult)){
+      currentEnergy = currentEnergy/2.0;
+      boid.currentEnergy = boid.currentEnergy/2.0;
+      createBoid += 1;
+      positionsToCreatePredator.add(position);
+    }
+  }
   void move() {
     velocity.add(acceleration); // add acceleration to velocity
     velocity.limit(maxSpeed); // make sure the velocity vector magnitude does not

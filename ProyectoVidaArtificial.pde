@@ -44,6 +44,8 @@ boolean animate = true;
 
 int createBoid = 0;
 ArrayList<Vector> positionsToCreate;
+ArrayList<Vector> positionsToCreatePredator;
+
 
 void setup() {
   size(1000, 800, P3D);
@@ -53,6 +55,7 @@ void setup() {
   //scene.drawAxes();
   
   positionsToCreate = new ArrayList();  
+  positionsToCreatePredator = new ArrayList(); 
   
   //CREATE BASIC PLANT AND PILES POSITIONS
   plant1X = random(20,flockWidth-20);
@@ -101,6 +104,7 @@ void draw() {
   
   //Reset values
   positionsToCreate = new ArrayList();
+  positionsToCreatePredator = new ArrayList();
   createBoid = 0;
   //println(flockPrey.size());
   
@@ -110,6 +114,10 @@ void createNewBoids(){
   for(int i = 0; i < positionsToCreate.size(); i++){
     //println("creating new");
     flockPrey.add(new Boid(scene, positionsToCreate.get(i),true));
+  }
+    for(int i = 0; i < positionsToCreatePredator.size(); i++){
+    //println("creating new");
+    flockPredator.add(new BoidPredator(scene, positionsToCreatePredator.get(i),true));
   }
 }
 
