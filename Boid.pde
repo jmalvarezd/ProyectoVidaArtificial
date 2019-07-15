@@ -3,19 +3,22 @@ class Boid extends Node {
   Vector position, velocity, acceleration, alignment, cohesion, separation; // position, velocity, and acceleration in
   // a vector datatype
   float neighborhoodRadius; // radius in which it looks for fellow boids
-  float maxSpeed = 5; // maximum magnitude for the velocity vector
+  float maxSpeed; // maximum magnitude for the velocity vector
   float maxSteerForce = .1f; // maximum magnitude of the steering vector
-  float sc = 3; // scale factor for the render of the boid
+  float sc; // scale factor for the render of the boid
   float flap = 0;
   float t = 0;
   float currentEnergy = 0;
   float maxEnergy;
+  float lifeExpectancy;
+  float metabolism;
   boolean shouldBeDrawn = true;
   boolean isMale;
   boolean isAdult = false;
   int preferedFood;
   float distanceToFood;
   Piel piel;
+  CodigoGenetico codigo;
 
   Boid(Scene scene, Vector inPos) {
     super(scene);
@@ -33,6 +36,32 @@ class Boid extends Node {
     preferedFood = int(ProyectoVidaArtificial.this.random(0,3));
     distanceToFood = Vector.distance(position, pilesOfFood.get(preferedFood).position);
     isMale = Math.random() < 0.5;
+    lifeExpectancy = 90;
+    metabolism = 1.0;
+    sc = 3.0;
+    maxSpeed = 4.0;
+  }
+    Boid(Scene scene, Vector inPos, CodigoGenetico code) {
+    super(scene);
+    piel = new Piel();
+    piel.c = false;
+    piel.setup();
+    codigo = code;
+    position = new Vector();
+    position.set(inPos);
+    setPosition(new Vector(position.x(), position.y(), position.z()));
+    velocity = new Vector(ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(1, -1));
+    acceleration = new Vector(0, 0, 0);
+    neighborhoodRadius = code.viewRadius;
+    maxEnergy = code.maxEnergy;
+    currentEnergy = maxEnergy*3.0/4.0;
+    preferedFood = int(ProyectoVidaArtificial.this.random(0,3));
+    distanceToFood = Vector.distance(position, pilesOfFood.get(preferedFood).position);
+    isMale = Math.random() < 0.5;
+    lifeExpectancy = code.lifeExpectancy;
+    metabolism = code.metabolism;
+    sc = code.size;
+    maxSpeed = code.maxSpeed;
   }
 
   @Override
@@ -48,7 +77,7 @@ class Boid extends Node {
 
     //uncomment to draw boid axes
     if(isMale){
-      Scene.drawAxes(pg, 10);
+      //Scene.drawAxes(pg, 10);
     }
     pg.noStroke();
 
@@ -92,6 +121,9 @@ class Boid extends Node {
     t += .1;
     if(t > 30){
       isAdult = true;
+    }
+    if(t > lifeExpectancy){
+      currentEnergy = 0;
     }
     flap = 10 * sin(t);
     // acceleration.add(steer(new Vector(mouseX,mouseY,300),true));
@@ -199,7 +231,6 @@ class Boid extends Node {
     if(currentEnergy > maxEnergy*9.0/10.0 && (isMale ^ boid.isMale) && (isAdult) && (boid.isAdult)){
       currentEnergy = currentEnergy/2.0;
       boid.currentEnergy = boid.currentEnergy/2.0;
-      createBoid += 1;
       positionsToCreate.add(position);
     }
   }
@@ -213,7 +244,7 @@ class Boid extends Node {
     setRotation(Quaternion.multiply(new Quaternion(new Vector(0, 1, 0), atan2(-velocity.z(), velocity.x())), 
       new Quaternion(new Vector(0, 0, 1), asin(velocity.y() / velocity.magnitude()))));
     acceleration.multiply(0); // reset acceleration
-    currentEnergy = currentEnergy - 1;
+    currentEnergy = currentEnergy - metabolism;
   }
 
   void checkBounds() {

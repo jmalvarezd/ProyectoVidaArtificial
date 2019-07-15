@@ -1,6 +1,7 @@
 /**
- * Flock of Boids
- * by Jean Pierre Charalambos.
+ * Flock of Boids Augmented
+ * by Juan Manuel Alvarez Duque.
+ * With Code by Jean Pierre Charalambos
  *
  * This example displays the famous artificial life program "Boids", developed by
  * Craig Reynolds in 1986 [1] and then adapted to Processing by Matt Wetmore in
@@ -34,7 +35,7 @@ int flockDepth = 600;
 boolean avoidWalls = true;
 
 
-int initBoidNum = 10; // amount of boids to start the program with
+int initBoidNum = 50; // amount of boids to start the program with
 ArrayList<Boid> flockPrey;
 ArrayList<BoidPredator> flockPredator;
 ArrayList<SandPile> pilesOfFood;
@@ -42,13 +43,14 @@ Node avatar;
 boolean animate = true;
 //Piel testPiel;
 
-int createBoid = 0;
 ArrayList<Vector> positionsToCreate;
 ArrayList<Vector> positionsToCreatePredator;
+ArrayList<CodigoGenetico> geneticsToCreate;
+ArrayList<CodigoGenetico> geneticsToCreatePredator;
 
 
 void setup() {
-  size(1000, 800, P3D);
+  size(1500, 800, P3D);
   scene = new Scene(this);
   scene.setFrustum(new Vector(0, 0, 0), new Vector(flockWidth, flockHeight, flockDepth));
   scene.fit();
@@ -56,6 +58,9 @@ void setup() {
   
   positionsToCreate = new ArrayList();  
   positionsToCreatePredator = new ArrayList(); 
+  
+  geneticsToCreate = new ArrayList();  
+  geneticsToCreatePredator = new ArrayList(); 
   
   //CREATE BASIC PLANT AND PILES POSITIONS
   plant1X = random(20,flockWidth-20);
@@ -105,7 +110,9 @@ void draw() {
   //Reset values
   positionsToCreate = new ArrayList();
   positionsToCreatePredator = new ArrayList();
-  createBoid = 0;
+  
+  geneticsToCreate = new ArrayList();
+  geneticsToCreatePredator = new ArrayList();
   //println(flockPrey.size());
   
 }

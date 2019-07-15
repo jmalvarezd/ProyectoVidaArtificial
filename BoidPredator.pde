@@ -5,7 +5,7 @@ class BoidPredator extends Node {
   // a vector datatype
   float neighborhoodRadius; // radius in which it looks for fellow boids
   float eatingRadius;
-  float maxSpeed = 4; // maximum magnitude for the velocity vector
+  float maxSpeed = 3.5; // maximum magnitude for the velocity vector
   float maxSteerForce = .1f; // maximum magnitude of the steering vector
   float sc = 10; // scale factor for the render of the boid
   float flap = 0;
@@ -91,7 +91,7 @@ class BoidPredator extends Node {
     if(t > 30){
       isAdult = true;
     }
-    if(t > 90){
+    if(t > 60){
       currentEnergy = 0;
     }
     // acceleration.add(steer(new Vector(mouseX,mouseY,300),true));
@@ -193,7 +193,6 @@ class BoidPredator extends Node {
     if(currentEnergy > maxEnergy*9.0/10.0 && (isMale ^ boid.isMale) && (isAdult) && (boid.isAdult)){
       currentEnergy = currentEnergy/2.0;
       boid.currentEnergy = boid.currentEnergy/2.0;
-      createBoid += 1;
       positionsToCreatePredator.add(position);
     }
   }
