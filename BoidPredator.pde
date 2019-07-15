@@ -13,12 +13,11 @@ class BoidPredator extends Node {
   float currentEnergy = 0;
   float maxEnergy;
   boolean shouldBeDrawn = true;
-  boolean isPrey;
   boolean isMale;
   boolean isAdult = false;
   Piel piel;
 
-  BoidPredator(Scene scene, Vector inPos, Boolean prey) {
+  BoidPredator(Scene scene, Vector inPos) {
     super(scene);
     piel = new Piel();
     piel.c = true;
@@ -32,7 +31,6 @@ class BoidPredator extends Node {
     eatingRadius = neighborhoodRadius/2;
     maxEnergy = ProyectoVidaArtificial.this.random(500,2000);
     currentEnergy = maxEnergy;
-    isPrey = prey;
     isMale = Math.random() < 0.5;
   }
 
@@ -92,6 +90,9 @@ class BoidPredator extends Node {
     flap = 10 * sin(t);
     if(t > 30){
       isAdult = true;
+    }
+    if(t > 90){
+      currentEnergy = 0;
     }
     // acceleration.add(steer(new Vector(mouseX,mouseY,300),true));
     // acceleration.add(new Vector(0,.05,0));

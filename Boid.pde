@@ -3,7 +3,7 @@ class Boid extends Node {
   Vector position, velocity, acceleration, alignment, cohesion, separation; // position, velocity, and acceleration in
   // a vector datatype
   float neighborhoodRadius; // radius in which it looks for fellow boids
-  float maxSpeed = 4; // maximum magnitude for the velocity vector
+  float maxSpeed = 5; // maximum magnitude for the velocity vector
   float maxSteerForce = .1f; // maximum magnitude of the steering vector
   float sc = 3; // scale factor for the render of the boid
   float flap = 0;
@@ -11,14 +11,13 @@ class Boid extends Node {
   float currentEnergy = 0;
   float maxEnergy;
   boolean shouldBeDrawn = true;
-  boolean isPrey;
   boolean isMale;
   boolean isAdult = false;
   int preferedFood;
   float distanceToFood;
   Piel piel;
 
-  Boid(Scene scene, Vector inPos, Boolean prey) {
+  Boid(Scene scene, Vector inPos) {
     super(scene);
     piel = new Piel();
     piel.c = false;
@@ -31,7 +30,6 @@ class Boid extends Node {
     neighborhoodRadius = 100;
     maxEnergy = ProyectoVidaArtificial.this.random(500,2000);
     currentEnergy = maxEnergy*3.0/4.0;
-    isPrey = prey;
     preferedFood = int(ProyectoVidaArtificial.this.random(0,3));
     distanceToFood = Vector.distance(position, pilesOfFood.get(preferedFood).position);
     isMale = Math.random() < 0.5;
