@@ -84,8 +84,20 @@ void setup() {
   flockPrey = new ArrayList();
   flockPredator = new ArrayList();
   for (int i = 0; i < initBoidNum; i++){
-    flockPrey.add(new Boid(scene, new Vector(flockWidth / 4, flockHeight / 2, flockDepth / 2)));
-    flockPredator.add(new BoidPredator(scene, new Vector(3*flockWidth / 4, flockHeight / 2, flockDepth / 2)));
+    flockPrey.add(
+      new Boid(
+        scene, 
+        new Vector(flockWidth / 4, flockHeight / 2, flockDepth / 2), 
+        new CodigoGenetico(true)
+      )
+    );
+    flockPredator.add(
+      new BoidPredator(
+        scene, 
+        new Vector(3*flockWidth / 4, flockHeight / 2, flockDepth / 2),
+        new CodigoGenetico(false)
+      )
+    );
   }
   //testPiel = new Piel();
   //testPiel.setup();
@@ -120,11 +132,11 @@ void draw() {
 void createNewBoids(){
   for(int i = 0; i < positionsToCreate.size(); i++){
     //println("creating new");
-    flockPrey.add(new Boid(scene, positionsToCreate.get(i)));
+    flockPrey.add(new Boid(scene, positionsToCreate.get(i),geneticsToCreate.get(i)));
   }
     for(int i = 0; i < positionsToCreatePredator.size(); i++){
     //println("creating new");
-    flockPredator.add(new BoidPredator(scene, positionsToCreatePredator.get(i)));
+    flockPredator.add(new BoidPredator(scene, positionsToCreatePredator.get(i),geneticsToCreatePredator.get(i)));
   }
 }
 

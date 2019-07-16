@@ -41,7 +41,7 @@ class Boid extends Node {
     sc = 3.0;
     maxSpeed = 4.0;
   }
-    Boid(Scene scene, Vector inPos, CodigoGenetico code) {
+  Boid(Scene scene, Vector inPos, CodigoGenetico code) {
     super(scene);
     piel = new Piel();
     piel.c = false;
@@ -232,6 +232,7 @@ class Boid extends Node {
       currentEnergy = currentEnergy/2.0;
       boid.currentEnergy = boid.currentEnergy/2.0;
       positionsToCreate.add(position);
+      geneticsToCreate.add(cruzar(codigo,boid.codigo));
     }
   }
 

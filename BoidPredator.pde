@@ -5,17 +5,20 @@ class BoidPredator extends Node {
   // a vector datatype
   float neighborhoodRadius; // radius in which it looks for fellow boids
   float eatingRadius;
-  float maxSpeed = 3.5; // maximum magnitude for the velocity vector
+  float maxSpeed; // maximum magnitude for the velocity vector
   float maxSteerForce = .1f; // maximum magnitude of the steering vector
-  float sc = 10; // scale factor for the render of the boid
+  float sc; // scale factor for the render of the boid
   float flap = 0;
   float t = 0;
   float currentEnergy = 0;
   float maxEnergy;
+  float lifeExpectancy;
+  float metabolism;
   boolean shouldBeDrawn = true;
   boolean isMale;
   boolean isAdult = false;
   Piel piel;
+  CodigoGenetico codigo;
 
   BoidPredator(Scene scene, Vector inPos) {
     super(scene);
@@ -32,6 +35,31 @@ class BoidPredator extends Node {
     maxEnergy = ProyectoVidaArtificial.this.random(500,2000);
     currentEnergy = maxEnergy;
     isMale = Math.random() < 0.5;
+    lifeExpectancy = 90;
+    metabolism = 1.0;
+    sc = 10.0;
+    maxSpeed = 3.0;
+  }
+  BoidPredator(Scene scene, Vector inPos, CodigoGenetico code) {
+    super(scene);
+    piel = new Piel();
+    piel.c = true;
+    piel.setup();
+    codigo = code;
+    position = new Vector();
+    position.set(inPos);
+    setPosition(new Vector(position.x(), position.y(), position.z()));
+    velocity = new Vector(ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(-1, 1), ProyectoVidaArtificial.this.random(1, -1));
+    acceleration = new Vector(0, 0, 0);
+    neighborhoodRadius = code.viewRadius;
+    eatingRadius = neighborhoodRadius/2;
+    maxEnergy = code.maxEnergy;
+    currentEnergy = maxEnergy*3.0/4.0;
+    isMale = Math.random() < 0.5;
+    lifeExpectancy = code.lifeExpectancy;
+    metabolism = code.metabolism;
+    sc = code.size;
+    maxSpeed = code.maxSpeed;
   }
 
   @Override
@@ -91,7 +119,7 @@ class BoidPredator extends Node {
     if(t > 30){
       isAdult = true;
     }
-    if(t > 60){
+    if(t > lifeExpectancy){
       currentEnergy = 0;
     }
     // acceleration.add(steer(new Vector(mouseX,mouseY,300),true));
@@ -194,6 +222,7 @@ class BoidPredator extends Node {
       currentEnergy = currentEnergy/2.0;
       boid.currentEnergy = boid.currentEnergy/2.0;
       positionsToCreatePredator.add(position);
+      geneticsToCreatePredator.add(cruzar(codigo,boid.codigo));
     }
   }
   void move() {
@@ -205,7 +234,7 @@ class BoidPredator extends Node {
     setRotation(Quaternion.multiply(new Quaternion(new Vector(0, 1, 0), atan2(-velocity.z(), velocity.x())), 
       new Quaternion(new Vector(0, 0, 1), asin(velocity.y() / velocity.magnitude()))));
     acceleration.multiply(0); // reset acceleration
-    currentEnergy = currentEnergy - 1;
+    currentEnergy = currentEnergy - metabolism;
   }
 
   void checkBounds() {

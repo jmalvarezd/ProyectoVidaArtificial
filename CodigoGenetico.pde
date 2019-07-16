@@ -19,13 +19,13 @@ public class CodigoGenetico {
     lifeExpectancy = ProyectoVidaArtificial.this.random(90,110);
     metabolism = ProyectoVidaArtificial.this.random(0.5,1.5);
     size = ProyectoVidaArtificial.this.random(2.5,3.5);
-    maxSpeed = ProyectoVidaArtificial.this.random(4.5,5.5);
+    maxSpeed = ProyectoVidaArtificial.this.random(4,5);
     maxEnergy = ProyectoVidaArtificial.this.random(1000,1500);
     isPrey = true;
   }
   public void createRandomPredator(){
     viewRadius = ProyectoVidaArtificial.this.random(90,110);
-    lifeExpectancy = ProyectoVidaArtificial.this.random(90,110);
+    lifeExpectancy = ProyectoVidaArtificial.this.random(55,65);
     metabolism = ProyectoVidaArtificial.this.random(0.5,1.5);
     size = ProyectoVidaArtificial.this.random(9.5,10.5);
     maxSpeed = ProyectoVidaArtificial.this.random(3.5,4.5);
@@ -33,7 +33,7 @@ public class CodigoGenetico {
     isPrey = false;
   }
 }
-CodigoGenetico reproduce(CodigoGenetico padre, CodigoGenetico madre){
+CodigoGenetico cruzar(CodigoGenetico padre, CodigoGenetico madre){
   CodigoGenetico hijo = new CodigoGenetico(padre.isPrey);
   
   hijo = mix(padre, madre);
