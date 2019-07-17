@@ -104,7 +104,7 @@ void setup() {
 }
 
 void draw() {
-  background(10, 50, 25);
+  background(20, 100, 50);
   ambientLight(128, 128, 128);
   directionalLight(255, 255, 255, 0, 1, -100);
   //scene.drawAxes();
