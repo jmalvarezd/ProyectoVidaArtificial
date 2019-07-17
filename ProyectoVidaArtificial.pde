@@ -50,7 +50,7 @@ ArrayList<CodigoGenetico> geneticsToCreatePredator;
 
 
 void setup() {
-  size(1500, 800, P3D);
+  size(1366, 768, P3D);
   scene = new Scene(this);
   scene.setFrustum(new Vector(0, 0, 0), new Vector(flockWidth, flockHeight, flockDepth));
   scene.fit();

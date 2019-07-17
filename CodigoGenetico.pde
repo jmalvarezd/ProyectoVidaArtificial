@@ -1,9 +1,9 @@
 public class CodigoGenetico {
-  float viewRadius;
-  float lifeExpectancy;
-  float metabolism;
-  float size;
-  float maxSpeed;
+  float viewRadius; 
+  float lifeExpectancy; 
+  float metabolism; 
+  float size; 
+  float maxSpeed; 
   float maxEnergy;
   Boolean isPrey;
   CodigoGenetico(boolean isPrey){

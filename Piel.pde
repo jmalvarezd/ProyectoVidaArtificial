@@ -44,7 +44,7 @@ public class Piel {
             }
         }
         
-        for (int n = 0; n < 20; n++) {
+        for (int n = 0; n < 50; n++) {
             int startx = (int) (Math.random()* (w) -1);
             int starty = (int) (Math.random() * (h) -1);
 
@@ -64,7 +64,7 @@ public class Piel {
     }
 
     void update() {
-        for (int s = 0; s < 50; s++) {
+        for (int s = 0; s < 100; s++) {
             for (int i = 1; i < w - 1; i++) {
                 for (int j = 1; j < h - 1; j++) {
 
